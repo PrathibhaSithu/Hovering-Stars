@@ -1,4 +1,14 @@
-# Moving Stars
+# 🌠 Motion Graphics with Three.js: Falling Flowers & Starfield Animation
+
+
+
+
+## How To Install and Use
+
+### Create a React App
+```
+npm create vite@latest my-portfolio -- --template react
+```
 
 
 <!-- 
