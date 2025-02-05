@@ -24,23 +24,41 @@ This project showcases dynamic **motion graphics** using **Three.js** in a **Rea
    ```bash
    git clone https://github.com/PrathibhaSithu/Hovering-Stars.git
    ```
+   2. Enter to Project
+   ```
+   cd Hovering-Stars
+   ```
+3. Install Dependencies
+```
+npm install
+```
+4. Install Tailwind Css
+```
+npm install tailwindcss @tailwindcss/vite
+```
+
+5. Install Three.js
+6. Install React Three 
+7. Install React Fiber
+8. Install React Extensions
+9. Install Framer Motion
+10. Install CountUp.js (for animations) 
+11. Run the Development Server
+```
+npm run dev
+```
 
 ## ⭐ If you like this project, don't forget to star the repository! ⭐    
 
+
 <!-- Create a React App
 ```
-npm create vite@latest my-portfolio -- --template react
+npm create vite@latest project-name -- --template react
 ``` -->
-
-
 <!-- 
-    npm create vite@latest my-portfolio -- --template react
 
-    cd my-portfolio
-    npm install
-    npm run dev
 
-    npm install tailwindcss @tailwindcss/vite
+    
 
     npm i three
     npm i @react-three/drei
