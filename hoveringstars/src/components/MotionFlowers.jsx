@@ -12,69 +12,44 @@ export default function MotionFlowers() {
         mountRef.current.appendChild(renderer.domElement);
         camera.position.z = 10;
 
-        // Function to create a smooth flower shape
-        function createFlowerShape() {
-            const shape = new THREE.Shape();
-            const petalCount = 6;
-            const petalLength = 1.2;
-            const petalWidth = 0.6;
+        // Array of flower image paths
+        const flowerTextures = [
+            new THREE.TextureLoader().load('../assets/flower.png'),
+            new THREE.TextureLoader().load('../assets/flower2.png'),
+            new THREE.TextureLoader().load('../assets/flower3.png'),
+            new THREE.TextureLoader().load('../assets/daisy.png'),
+            new THREE.TextureLoader().load('../assets/rose.png'),
+        ];
 
-            for (let i = 0; i < petalCount; i++) {
-                const angle = (i / petalCount) * Math.PI * 2;
-                const x = Math.cos(angle) * petalWidth;
-                const y = Math.sin(angle) * petalLength;
-
-                if (i === 0) {
-                    shape.moveTo(x, y);
-                } else {
-                    shape.bezierCurveTo(
-                        x * 1.2, y * 1.2, // Control point 1
-                        x * 0.8, y * 0.8, // Control point 2
-                        x, y              // End point
-                    );
-                }
-            }
-
-            shape.closePath();
-            return shape;
-        }
-
-        const flowerGeometry = new THREE.ExtrudeGeometry(createFlowerShape(), { depth: 0.1, bevelEnabled: true, bevelSize: 0.05 });
-        
-        // Function to generate random flower colors
-        function getRandomColor() {
-            const colors = [0xff69b4, 0xffc0cb, 0xff4500, 0xff1493, 0xff6347];
-            return colors[Math.floor(Math.random() * colors.length)];
-        }
-
-        const flowerCount = 500; // Adjusted for better performance
-        const flowerField = new THREE.Group();
+        const flowerCount = 100; // Number of flowers
+        const flowers = [];
 
         for (let i = 0; i < flowerCount; i++) {
-            const flowerMaterial = new THREE.MeshBasicMaterial({ color: getRandomColor(), side: THREE.DoubleSide });
-            const flower = new THREE.Mesh(flowerGeometry, flowerMaterial);
+            const material = new THREE.SpriteMaterial({
+                map: flowerTextures[Math.floor(Math.random() * flowerTextures.length)],
+                transparent: true,
+            });
 
-            flower.position.x = (Math.random() - 0.5) * 100;
-            flower.position.y = (Math.random() - 0.5) * 100;
-            flower.position.z = (Math.random() - 0.5) * 100;
+            const flower = new THREE.Sprite(material);
+            flower.scale.setScalar(Math.random() * 1.5 + 0.5); // Random size
 
-            flower.rotation.z = Math.random() * Math.PI * 2; // Random rotation
-            flower.scale.setScalar(Math.random() * 0.5 + 0.5); // Random size variation
+            // Random starting position above the screen
+            flower.position.set(
+                (Math.random() - 0.5) * 20,
+                Math.random() * 15 + 5, // Start above the screen
+                (Math.random() - 0.5) * 20
+            );
 
-            flowerField.add(flower);
+            flower.userData = {
+                velocity: Math.random() * 0.05 + 0.02, // Fall speed
+                rotationSpeed: (Math.random() - 0.5) * 0.02, // Random rotation speed
+            };
+
+            scene.add(flower);
+            flowers.push(flower);
         }
 
-        scene.add(flowerField);
-
-        const handleMouseMove = (event) => {
-            const mouseX = (event.clientX / window.innerWidth) * 2 - 1;
-            const mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
-            flowerField.rotation.x += mouseY * 0.01;
-            flowerField.rotation.y += mouseX * 0.01;
-        };
-
-        window.addEventListener('mousemove', handleMouseMove);
-
+        // Handle window resizing
         const handleResize = () => {
             const width = window.innerWidth;
             const height = window.innerHeight;
@@ -85,21 +60,27 @@ export default function MotionFlowers() {
 
         window.addEventListener('resize', handleResize);
 
+        // Animate falling flowers
         const animate = () => {
             requestAnimationFrame(animate);
-            flowerField.rotation.y += 0.001;
-            flowerField.rotation.x += 0.001;
+
+            flowers.forEach(flower => {
+                flower.position.y -= flower.userData.velocity; // Falling motion
+                flower.rotation.z += flower.userData.rotationSpeed; // Rotation effect
+
+                // Reset position when flower falls off screen
+                if (flower.position.y < -10) {
+                    flower.position.y = Math.random() * 10 + 5;
+                    flower.position.x = (Math.random() - 0.5) * 20;
+                    flower.position.z = (Math.random() - 0.5) * 20;
+                }
+            });
+
             renderer.render(scene, camera);
         };
 
         animate();
-
     }, []);
 
-    return (
-        <div
-            ref={mountRef}
-            className='fixed inset-0 -z-1 w-full h-full'
-        />
-    );
+    return <div ref={mountRef} className="fixed inset-0 -z-1 w-full h-full" />;
 }
