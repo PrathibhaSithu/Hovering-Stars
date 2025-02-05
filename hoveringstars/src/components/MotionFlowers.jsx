@@ -12,14 +12,22 @@ export default function MotionFlowers() {
         mountRef.current.appendChild(renderer.domElement);
         camera.position.z = 10;
 
-        // Array of flower image paths
+        const loader = new THREE.TextureLoader().setPath('/assets/'); // Set base path for images
         const flowerTextures = [
-            new THREE.TextureLoader().load('../assets/flower.png'),
-            new THREE.TextureLoader().load('../assets/flower2.png'),
-            new THREE.TextureLoader().load('../assets/flower3.png'),
-            new THREE.TextureLoader().load('../assets/daisy.png'),
-            new THREE.TextureLoader().load('../assets/rose.png'),
+            loader.load('flower.png', (texture) => resizeTexture(texture)),
+            loader.load('flower2.png', (texture) => resizeTexture(texture)),
+            loader.load('flower3.png', (texture) => resizeTexture(texture)),
+            loader.load('daisy.png', (texture) => resizeTexture(texture)),
+            loader.load('rose.png', (texture) => resizeTexture(texture)),
         ];
+
+        function resizeTexture(texture) {
+            texture.minFilter = THREE.LinearFilter;
+            texture.magFilter = THREE.LinearFilter;
+            texture.image.width = 10;  // Reduce width
+            texture.image.height = 10; // Reduce height
+            texture.needsUpdate = true;
+        }
 
         const flowerCount = 100; // Number of flowers
         const flowers = [];
