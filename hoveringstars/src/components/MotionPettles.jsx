@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
-export default function MotionFlowers() {
+export default function MotionPettles() {
     const mountRef = useRef(null);
 
     useEffect(() => {
