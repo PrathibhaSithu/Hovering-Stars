@@ -24,7 +24,7 @@ This project showcases dynamic **motion graphics** using **Three.js** in a **Rea
    ```bash
    git clone https://github.com/PrathibhaSithu/Hovering-Stars.git
    ```
-   2. Enter to Project
+2. Enter to Project
    ```
    cd Hovering-Stars
    ```
