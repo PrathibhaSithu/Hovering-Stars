@@ -18,7 +18,7 @@ export default function MotionFlowers() {
 
         camera.position.z = 20;
 
-        // Array of flower textures
+        // Load flower textures
         const flowerTextures = [
             new THREE.TextureLoader().load(flower1),
             new THREE.TextureLoader().load(flower2),
@@ -27,30 +27,41 @@ export default function MotionFlowers() {
             new THREE.TextureLoader().load(rose),
         ];
 
-        const flowerCount = 100; // Number of flowers
+        const flowerCount = 100;
         const flowers = [];
+
+        const getRandomPosition = () => {
+            const aspectRatio = window.innerWidth / window.innerHeight;
+            return {
+                x: (Math.random() - 0.5) * aspectRatio * 40, // Spread based on screen width
+                y: Math.random() * 15 + 5, // Start above the screen
+                z: (Math.random() - 0.5) * 40, // More scattered depth
+            };
+        };
+
         for (let i = 0; i < flowerCount; i++) {
             const material = new THREE.SpriteMaterial({
                 map: flowerTextures[Math.floor(Math.random() * flowerTextures.length)],
                 transparent: true,
             });
+
             const flower = new THREE.Sprite(material);
-            flower.scale.setScalar(Math.random() * 0.3 + 0.1); // Random size between 0.1 and 0.4
-            // Random starting position above the screen
-            flower.position.set(
-                (Math.random() - 0.5) * 20,
-                Math.random() * 15 + 5, // Start above the screen
-                (Math.random() - 0.5) * 20
-            );
+            flower.scale.setScalar(Math.random() * 0.3 + 0.1); // Random size
+
+            // Random starting position
+            const pos = getRandomPosition();
+            flower.position.set(pos.x, pos.y, pos.z);
+
             flower.userData = {
-                velocity: Math.random() * 0.05 + 0.02, // Fall speed
-                rotationSpeed: (Math.random() - 0.5) * 0.02, // Random rotation speed
+                velocity: Math.random() * 0.05 + 0.02,
+                rotationSpeed: (Math.random() - 0.5) * 0.02,
             };
+
             scene.add(flower);
             flowers.push(flower);
         }
 
-        // Handle window resizing
+        // Handle resizing
         const handleResize = () => {
             const width = window.innerWidth;
             const height = window.innerHeight;
@@ -58,37 +69,33 @@ export default function MotionFlowers() {
             camera.aspect = width / height;
             camera.updateProjectionMatrix();
         };
+
         window.addEventListener('resize', handleResize);
 
-        // Animate falling flowers
+        // Animation loop
         const animate = () => {
             requestAnimationFrame(animate);
             flowers.forEach(flower => {
-                flower.position.y -= flower.userData.velocity; // Falling motion
-                flower.rotation.z += flower.userData.rotationSpeed; // Rotation effect
-                // Reset position when flower falls off screen
+                flower.position.y -= flower.userData.velocity;
+                flower.rotation.z += flower.userData.rotationSpeed;
+
+                // Reset flower when it falls below the screen
                 if (flower.position.y < -10) {
-                    flower.position.y = Math.random() * 10 + 5;
-                    flower.position.x = (Math.random() - 0.5) * 20;
-                    flower.position.z = (Math.random() - 0.5) * 20;
+                    const pos = getRandomPosition();
+                    flower.position.set(pos.x, pos.y, pos.z);
                 }
             });
+
             renderer.render(scene, camera);
         };
 
         animate();
 
-        // Cleanup on component unmount
         return () => {
             window.removeEventListener('resize', handleResize);
             mountRef.current.removeChild(renderer.domElement);
         };
     }, []);
 
-    return (
-        <div
-            ref={mountRef}
-            className='fixed inset-0 -z-1 w-full h-full'
-        />
-    );
+    return <div ref={mountRef} className="fixed inset-0 -z-1 w-full h-full" />;
 }
