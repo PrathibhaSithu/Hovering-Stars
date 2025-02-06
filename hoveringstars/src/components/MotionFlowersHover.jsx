@@ -10,11 +10,18 @@ export default function MotionFlowersHover() {
     const mountRef = useRef(null);
 
     useEffect(() => {
+        if (!mountRef.current) return;
+
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ alpha: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
-        mountRef.current.appendChild(renderer.domElement);
+
+        // Append renderer only if mountRef is available
+        if (mountRef.current) {
+            mountRef.current.appendChild(renderer.domElement);
+        }
+
         camera.position.z = 15;
 
         // Load flower textures
@@ -26,7 +33,7 @@ export default function MotionFlowersHover() {
             new THREE.TextureLoader().load(rose),
         ];
 
-        const flowerCount = 200;
+        const flowerCount = 100; // Reduce count for performance
         const flowers = [];
 
         for (let i = 0; i < flowerCount; i++) {
@@ -99,7 +106,9 @@ export default function MotionFlowersHover() {
         return () => {
             window.removeEventListener('mousemove', handleMouseMove);
             window.removeEventListener('resize', handleResize);
-            mountRef.current.removeChild(renderer.domElement);
+            if (mountRef.current) {
+                mountRef.current.innerHTML = ''; // Proper cleanup
+            }
         };
     }, []);
 
